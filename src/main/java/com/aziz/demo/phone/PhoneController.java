@@ -12,6 +12,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.text.AttributedString;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -24,7 +25,10 @@ public class PhoneController {
    final TypeService typeService;
 
     @RequestMapping("/showCreate")
-    public String showCreate() {
+    public String showCreate(ModelMap modelMap) {
+        List<Type> types=  typeService.findAll();
+
+        modelMap.addAttribute("types", types);
         return "AddPhone";
     }
     @RequestMapping("/saveTelephone")
@@ -33,12 +37,16 @@ public class PhoneController {
                               ModelMap modelMap) throws java.text.ParseException {
         //conversion de la date
         System.out.println("ici");
+
         SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
         Date dateCreation = dateformat.parse(String.valueOf(date));
         System.out.println(dateCreation);
         phone.setDateOfCreation(dateCreation);
         Phone savePhone = phoneService.savePhone(phone);
+
         String msg = "phone saved with  Id " + savePhone.getIdPhone();
+        List<Type> types=  typeService.findAll();
+        modelMap.addAttribute("types", types);
         modelMap.addAttribute("msg", msg);
         return "AddPhone";
     }

@@ -28,7 +28,6 @@
                         <td th:text="${p.type.nameType}"></td>
                         <td th:text="${#dates.format(p.dateOfCreation, 'dd/MM/yyyy')}"></td>
 
-
                         <td><a class="btn btn-danger" onclick="return confirm('Are you sure ?')" th:href="@{supprimerPhone(id=${p.idPhone},
                             page=${currentPage}, size=${size})}">Delete</a></td>
 
