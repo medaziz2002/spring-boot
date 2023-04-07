@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template">
+<link rel="stylesheet" type="text/css" href="webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
+<head>
+    <meta charset="utf-8">
+    <title>Add Type</title>
+</head>
+<body>
+<div layout:fragment="Mycontent">
+    <div class="container mt-5" >
+        <div class="card-body">
+            <form action="saveType" method="post">
+                <div class="form-group">
+                    <label class="control-label">Nom :</label>
+                    <input type="text" name="nameType" class="form-control"/>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Description :</label>
+                    <input type="text" name="descriptionType" class="form-control"/>
+                </div>
+
+
+                <div>
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
+                </div>
+            </form>
+        </div>
+
+        <br/>
+        <br/>
+
+    </div>
+</div>
+</body>
+</html>

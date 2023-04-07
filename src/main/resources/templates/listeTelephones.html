@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template">
+<link rel="stylesheet" type="text/css" href="webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
+<head>
+    <meta charset="utf-8">
+    <title>List of mobile phone</title>
+</head>
+<body>
+<div layout:fragment="Mycontent">
+    <div class="container mt-5">
+        <a class="btn btn-info"  th:href="@{showCreate}">Add phone</a>
+        <div class="card">
+            <div class="card-header">
+                List of mobile phone
+            </div>
+            <div class="card-body">
+
+                <table class="table table-striped">
+                    <tr>
+                        <th>ID</th><th>Phone Name</th><th>Phone price</th><th>Type</th><th>Date of Import</th><th>Actions</th>
+                    </tr>
+                    <tr th:each="p:${phones.content}">
+                        <td th:text="${p.idPhone}"></td>
+                        <td th:text="${p.phoneName}"></td>
+                        <td th:text="${p.price}"></td>
+                        <td th:text="${p.type.nameType}"></td>
+                        <td th:text="${#dates.format(p.dateOfCreation, 'dd/MM/yyyy')}"></td>
+
+
+                        <td><a class="btn btn-danger" onclick="return confirm('Are you sure ?')" th:href="@{supprimerPhone(id=${p.idPhone},
+                            page=${currentPage}, size=${size})}">Delete</a></td>
+
+                    </tr>
+                </table>
+                <ul class="nav nav-pills">
+                    <li th:each="page,status:${pages}">
+                        <a th:class="${status.index==currentPage?'btn btn-primary':'btn' }"
+                           th:href="@{ listeTelephone(page=${status.index}, size=${size} ) }"
+                           th:text="${status.index }"></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
