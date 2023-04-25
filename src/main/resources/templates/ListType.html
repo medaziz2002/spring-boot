@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.w3.org/1999/xhtml"
       layout:decorate="template">
 <link rel="stylesheet" type="text/css" href="webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
 <head>
@@ -10,7 +10,7 @@
 <body>
 <div layout:fragment="Mycontent">
     <div class="container mt-5">
-        <a class="btn btn-info"  th:href="@{showCreate1}">Add Type</a>
+        <a class="btn btn-info"   sec:authorize="hasRole('ADMIN')" th:href="@{showCreate1}">Add Type</a>
         <div class="card">
             <div class="card-header">
                 List of mobile phone
@@ -19,7 +19,7 @@
 
                 <table class="table table-striped">
                     <tr>
-                        <th>ID</th><th>Name</th><th>Description</th><th>Actions</th>
+                        <th>ID</th><th>Name</th><th>Description</th><th th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Actions</th>
                     </tr>
                     <tr th:each="p:${types.content}">
                         <td th:text="${p.idType}"></td>
@@ -28,7 +28,7 @@
 
 
 
-                        <td><a class="btn btn-danger" onclick="return confirm('Are you sure ?')" th:href="@{supprimerType(id=${p.idType},
+                        <td th:if="${#authorization.expression('hasRole(''ADMIN'')')}"><a class="btn btn-danger" onclick="return confirm('Are you sure ?')" th:href="@{supprimerType(id=${p.idType},
                             page=${currentPage}, size=${size})}">Delete</a></td>
 
                     </tr>

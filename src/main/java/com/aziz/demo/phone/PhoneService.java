@@ -61,7 +61,7 @@ public class PhoneService {
         return phoneRepository.findByType(type);
     }
 
-    public List<Phone> findByTypeIdCat(Integer id) {
+    public List<Phone> findByTypeIdType(Integer id) {
         return phoneRepository.findByTypeIdType(id);
     }
 
