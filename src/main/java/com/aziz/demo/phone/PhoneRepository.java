@@ -1,12 +1,21 @@
 package com.aziz.demo.phone;
 import com.aziz.demo.Type.Type;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+
 import java.math.BigDecimal;
 import java.util.List;
 
+
+@RepositoryRestResource(path = "Rest")
 public interface PhoneRepository extends JpaRepository<Phone,Integer> {
 
+
+
+    Page<Phone> findByPhoneNameContains(String kw, Pageable pageable);
     List<Phone> findByPhoneName(String name);
     List<Phone> findByPhoneNameContains(String name);
 

@@ -10,28 +10,38 @@
 <body>
 <div layout:fragment="Mycontent">
 <div class="container mt-5" >
+  <div class="card">
+    <div class="card-header" th:if="${mode=='new'}"> Add Phones </div>
+    <div class="card-header" th:if="${mode=='edit'}">Update Phones
+    </div>
+
   <div class="card-body">
+
     <form action="saveTelephone" method="post">
       <div class="form-group">
-        <label class="control-label">Nom Produit :</label>
-        <input type="text" name="phoneName" class="form-control"/>
+        <label class="control-label">Phone name :</label>
+        <input type="text" name="phoneName" class="form-control"  th:value="${phone.phoneName}" >
+        <span th:errors= "${phone.phoneName}" class="text-danger"> </span>
+
       </div>
       <div class="form-group">
-        <label class="control-label">Prix Produit :</label>
-        <input type="text" name="price" class="form-control"/>
+        <label class="control-label">Price :</label>
+        <input type="text" name="price" class="form-control" th:value="${phone.price}"/>
+        <span th:errors="*{phone.price}" class="text-danger"> </span>
+
       </div>
 
       <div class="form-group">
-        <label>Genre</label>
+        <label>Type</label>
         <select class="form-control form-control-lg" id="type" name="type">
-          <option th:each="types : ${types}" th:value="${types.idType}" th:text="${types.nameType}">
+          <option th:each="types : ${types}" th:value="${types.idType}" th:text="${types.nameType}" >
 
           </option>
         </select>
       </div>
       <div class="form-group">
         <label class="control-label">date création :</label>
-        <input type="date" name="date" class="form-control"/>
+        <input type="date" name="dateOfCreation" class="form-control" th:value="${phone.dateOfCreation}"/>
       </div>
       <div>
         <button type="submit" class="btn btn-primary">Ajouter</button>
@@ -42,6 +52,7 @@
   <br/>
   <br/>
 
+</div>
 </div>
 </div>
 </body>

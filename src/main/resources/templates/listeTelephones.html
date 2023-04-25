@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.w3.org/1999/xhtml"
       layout:decorate="template">
 <link rel="stylesheet" type="text/css" href="webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
 <head>
@@ -10,33 +10,54 @@
 <body>
 <div layout:fragment="Mycontent">
     <div class="container mt-5">
-        <a class="btn btn-info"  th:href="@{showCreate}">Add phone</a>
+        <a class="btn btn-info" th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{showCreate}">Add phone</a>
         <div class="card">
             <div class="card-header">
                 List of mobile phone
             </div>
             <div class="card-body">
-
+                <form method="get" th:action="@{index}">
+                    <ul class="nav nav-pills">
+                        <li>
+                            <label class="form-label" >Keyword:</label>
+                        </li>
+                        <li>
+                            <input type="text" class="form-control" name="keyword"  th:value="${keyword}" >
+                        </li>
+                        <li>
+                            <button class="btn btn-info">
+                                Chercher par nom
+                            </button>
+                        </li>
+                    </ul>
+                </form>
+                <br>
                 <table class="table table-striped">
                     <tr>
-                        <th>ID</th><th>Phone Name</th><th>Phone price</th><th>Type</th><th>Date of Import</th><th>Actions</th>
+                        <th>ID</th><th>Phone Name</th><th>Phone price</th><th>Type</th><th>Date of Import</th><th colspan="2" th:if="${#authorization.expression('hasRole(''ADMIN'')')}"  >Actions</th>
                     </tr>
-                    <tr th:each="p:${phones.content}">
+                    <tr th:each="p:${phones}">
                         <td th:text="${p.idPhone}"></td>
                         <td th:text="${p.phoneName}"></td>
                         <td th:text="${p.price}"></td>
                         <td th:text="${p.type.nameType}"></td>
                         <td th:text="${#dates.format(p.dateOfCreation, 'dd/MM/yyyy')}"></td>
 
-                        <td><a class="btn btn-danger" onclick="return confirm('Are you sure ?')" th:href="@{supprimerPhone(id=${p.idPhone},
+                        <td th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                            <a class="btn btn-danger" onclick="return confirm('Are you sure ?')" th:href="@{supprimerPhone(id=${p.idPhone},
                             page=${currentPage}, size=${size})}">Delete</a></td>
-
+                        <td th:if="${#authorization.expression('hasRole(''ADMIN'')')}" >
+                            <a class="btn btn-success"
+                               th:href="@{modifierPhone(id=${p.idPhone})}">Editer</a>
+                        </td>
                     </tr>
                 </table>
                 <ul class="nav nav-pills">
                     <li th:each="page,status:${pages}">
                         <a th:class="${status.index==currentPage?'btn btn-primary':'btn' }"
                            th:href="@{ listeTelephone(page=${status.index}, size=${size} ) }"
+
+
                            th:text="${status.index }"></a>
                     </li>
                 </ul>

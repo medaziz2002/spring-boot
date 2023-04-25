@@ -4,15 +4,19 @@ package com.aziz.demo.phone;
 
 import com.aziz.demo.Type.Type;
 import com.aziz.demo.Type.TypeService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.text.AttributedString;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -22,36 +26,30 @@ import java.util.List;
 public class PhoneController {
 
     final PhoneService phoneService;
+    final PhoneRepository phoneRepository;
    final TypeService typeService;
 
     @RequestMapping("/showCreate")
     public String showCreate(ModelMap modelMap) {
-        List<Type> types=  typeService.findAll();
-
-        modelMap.addAttribute("types", types);
-        return "AddPhone";
+        modelMap.addAttribute("phone", new Phone());
+        modelMap.addAttribute("mode", "new");
+        List<Type> t =typeService.findAll();
+        modelMap.addAttribute("types",t);
+        return "formPhone";
     }
+
     @RequestMapping("/saveTelephone")
-    public String saveTelephone(@ModelAttribute("phone") Phone phone,
-                              @RequestParam("date") String date,
-                              ModelMap modelMap) throws java.text.ParseException {
-        //conversion de la date
-        System.out.println("ici");
 
-        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
-        Date dateCreation = dateformat.parse(String.valueOf(date));
-        System.out.println(dateCreation);
-        phone.setDateOfCreation(dateCreation);
-        Phone savePhone = phoneService.savePhone(phone);
-
-        String msg = "phone saved with  Id " + savePhone.getIdPhone();
-        List<Type> types=  typeService.findAll();
-        modelMap.addAttribute("types", types);
-        modelMap.addAttribute("msg", msg);
-        return "AddPhone";
+    public String saveTelephone(@Valid Phone phone,ModelMap modelMap,
+                                BindingResult bindingResult){
+        List<Type> t =typeService.findAll();
+        modelMap.addAttribute("types",t);
+        if (bindingResult.hasErrors()) return "FormPhone";
+        phoneService.savePhone(phone);
+        return "FormPhone";
     }
 
-    @RequestMapping("/listeTelephone")
+    @RequestMapping ("/listeTelephone")
     public String listeTelephones(ModelMap modelMap,
                                   @RequestParam (name="page",defaultValue = "0") int page,
                                   @RequestParam (name="size", defaultValue = "2") int size)
@@ -64,7 +62,9 @@ public class PhoneController {
         return "listeTelephones";
     }
 
-    @RequestMapping("/supprimerPhone") public String supprimerPhone(@RequestParam("id") Integer id,
+    @RequestMapping("/supprimerPhone")
+
+    public String supprimerPhone(@RequestParam("id") Integer id,
                                                                         ModelMap modelMap,
                                                                         @RequestParam (name="page",defaultValue = "0") int page,
                                                                         @RequestParam (name="size", defaultValue = "2") int size)
@@ -82,9 +82,13 @@ public class PhoneController {
     {
         Phone p= phoneService.getPhone(id);
         modelMap.addAttribute("phone", p);
-        return "editerProduit";
+        List<Type> t =typeService.findAll();
+        modelMap.addAttribute("types",t);
+        modelMap.addAttribute("mode", "edit");
+        return "formPhone";
     }
     @RequestMapping("/updatePhone")
+
     public String updatePhone(@ModelAttribute("phone") Phone phone,
                                 @RequestParam("date") String date,
                                 ModelMap modelMap) throws java.text.ParseException {
@@ -98,8 +102,7 @@ public class PhoneController {
         return "listeTelephones";
     }
 
-/*
-    final PhoneService phoneService;
+/*    final PhoneService phoneService;
     @GetMapping
     public List<Phone> getAllPhones() {
         return phoneService.getAllPhones();
@@ -122,4 +125,29 @@ public class PhoneController {
     public List<Phone> getPhonesByTypeId(@PathVariable("idType") Integer idType) {
         return phoneService.findByTypeIdCat(idType);
     }*/
+
+
+    @GetMapping("/")
+    public String home()
+    {
+        return "redirect:/listeTelephone";
+    }
+    @GetMapping("/index")
+    public String index(Model model,
+                        @RequestParam(name = "page",defaultValue = "0") int page,
+                        @RequestParam(name = "size",defaultValue = "2") int size,
+                        @RequestParam(name = "keyword",defaultValue = "") String kw
+    ){
+
+        System.out.println("dans le controller");
+        System.out.println("le keyword est"+kw);
+        Page<Phone> pagePhones = phoneRepository.findByPhoneNameContains(kw, PageRequest.of(page,size));
+        System.out.println("apres appel la fonction");
+        System.out.println("rest"+pagePhones.getContent().size());
+        model.addAttribute("phones",pagePhones.getContent());
+        model.addAttribute("pages",new int[pagePhones.getTotalPages()]);
+        model.addAttribute("currentPage",page);
+        model.addAttribute("keyword",kw);
+        return "listeTelephones";
+    }
 }
